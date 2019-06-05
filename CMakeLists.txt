@@ -36,7 +36,6 @@ SET(BOOST_LIBRARYDIR           "/usr/lib64")
 
 FIND_PACKAGE(Boost REQUIRED COMPONENTS date_time)
 
-# project setup
 MESSAGE("==============================================================")
 MESSAGE("                        ..:: BOOST ::..                       ")
 MESSAGE("==============================================================")
@@ -50,8 +49,47 @@ MESSAGE("Boost_LIBRARY_DIRS:         ${Boost_LIBRARY_DIRS}")
 MESSAGE("Boost_LIBRARIES:            ${Boost_LIBRARIES}")
 MESSAGE("==============================================================")
 
-ADD_EXECUTABLE(${PROJECT_NAME}
+#=====================
+# ..:: QT5 SETUP ::..
+#=====================
+
+FIND_PACKAGE(Qt5 COMPONENTS REQUIRED Core Gui Widgets)
+
+SET(CMAKE_INCLUDE_CURRENT_DIR ON)
+
+
+
+set(project_sources
+  mainwindow.cpp
   main.cpp)
 
+set(project_headers
+  mainwindow.h)
+
+set(project_ui
+  mainwindow.ui)
+
+# wrap the ui file to a c++ header
+qt5_wrap_ui(ui_wrap ${project_ui})
+qt5_wrap_cpp(moc_sources ${project_headers})
+
+ADD_EXECUTABLE(${PROJECT_NAME}
+  ${project_sources}
+  ${project_headers}
+  ${ui_wrap}
+  ${moc_sources})
+
 TARGET_LINK_LIBRARIES(${PROJECT_NAME}
-  ${Boost_LIBRATIES})
+  PUBLIC
+  ${Boost_LIBRATIES}
+  Qt5::Core
+  Qt5::Gui
+  Qt5::Widgets)
+
+# auto copy dlls if on windows
+if(WIN32)
+  add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different $<TARGET_FILE:Qt5::Core> $<TARGET_FILE_DIR:${PROJECT_NAME}>
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different $<TARGET_FILE:Qt5::Gui> $<TARGET_FILE_DIR:${PROJECT_NAME}>
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different $<TARGET_FILE:Qt5::Widgets> $<TARGET_FILE_DIR:${PROJECT_NAME}> )
+endif(WIN32)
