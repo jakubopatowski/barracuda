@@ -1,0 +1,369 @@
+  Author: Jakub Opatowski
+  mailto: [[jakub.opatowski@gmail.com]]
+
+* Readme
+
+  [[https://www.masteringemacs.org/article/spotlight-use-package-a-declarative-configuration-tool][How to add and configure new package]]
+
+tltr
+
+example:
+(use-package smex
+  :ensure t
+  :bind (("M-x" . smex))
+  :config (smex-initialize))
+
+The :config keyword executes the code after a package is loaded; 
+the :init keyword executes the code before the package is loaded; 
+and the :preface keyword is there so the Emacs byte compiler and the 
+lisp evaluator know about things like function and symbol declarations.
+
+* Small tweaks
+
+#+BEGIN_SRC emacs-lisp
+  (setq ingibit-startup-message t)
+  (tool-bar-mode -1)
+  (show-paren-mode 1)
+  ;;(electric-pair-mode 1)
+  (defalias 'list-buffers 'ibuffer-other-window)
+  (setq make-backup-files nil) ;stop creating backup~ files
+  (setq auto-save-default nil) ;stop creating #autosave# files
+  (setq column-number-mode t)
+#+END_SRC
+
+* Small packages
+
+#+BEGIN_SRC emacs-lisp
+  (use-package try
+    :ensure )
+
+  (use-package ace-window
+    :ensure t
+    :config
+    (progn
+      (global-set-key [remap other-window] 'ace-window)
+      (custom-set-faces
+      '(aw-leading-char-face
+        ((t (:inherit ace-jump-face-foreground :height 3.0)))))
+      ))
+
+  (use-package move-text
+    :ensure t
+    :bind (("M-p" . move-text-up)
+           ("M-n" . move-text-down)))
+#+END_SRC
+
+* Theme
+
+#+BEGIN_SRC emacs-lisp
+  ;; (use-package color-theme-sanityinc-solarized
+  ;;   :ensure t
+  ;;   :config
+  ;;   (load-theme 'sanityinc-solarized-dark t))
+#+END_SRC
+
+[[https://github.com/hlissner/emacs-doom-themes][doom-theme homepage] ]
+#+BEGIN_SRC emacs-lisp
+  (use-package doom-themes
+    :ensure t
+    :init
+    (setq doom-themes-enable-bold t    ; if nil, bold is universally disabled
+          doom-themes-enable-italic t) ; if nil, italics is universally disabled
+    (load-theme 'doom-one t)
+    (doom-themes-visual-bell-config)
+    (doom-themes-neotree-config)
+    ;;(doom-themes-treemacs-config)
+    (doom-themes-org-config))
+
+  ;;https://github.com/hlissner/emacs-solaire-mode
+  ;;(use-package solaire-mode
+  ;;  :ensure t)
+
+  ;; brighten buffers (that represent real files)
+  ;;(add-hook 'change-major-mode-hook #'turn-on-solaire-mode)
+  ;; To enable solaire-mode unconditionally for certain modes:
+  ;;(add-hook 'ediff-prepare-buffer-hook #'solaire-mode)
+
+  ;; ...if you use auto-revert-mode, this prevents solaire-mode from turning
+  ;; itself off every time Emacs reverts the file
+  ;;(add-hook 'after-revert-hook #'turn-on-solaire-mode)
+
+  ;; highlight the minibuffer when it is activated:
+  ;;(add-hook 'minibuffer-setup-hook #'solaire-mode-in-minibuffer)
+
+
+  ;; if the bright and dark background colors are the wrong way around, use this
+  ;; to switch the backgrounds of the `default` and `solaire-default-face` faces.
+  ;; This should be used *after* you load the active theme!
+  ;;
+  ;; NOTE: This is necessary for themes in the doom-themes package!
+  ;;(solaire-mode-swap-bg)
+
+#+END_SRC
+
+* Neotree
+
+[[https://github.com/domtronn/all-the-icons.el][all-the-icons homepage]]
+[[https://github.com/jaypei/emacs-neotree][neotree homepage]]
+
+#+BEGIN_SRC emacs-lisp
+  (use-package all-the-icons
+    :ensure t)
+
+  (use-package neotree
+    :ensure t
+    :init
+    (global-set-key [f8] 'neotree-toggle))
+#+END_SRC
+
+* Org mode setup
+
+#+BEGIN_SRC emacs-lisp
+(use-package org-bullets
+  :ensure t
+  :config
+  (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1))))
+#+END_SRC
+
+* Flycheck
+
+[[https://www.flycheck.org/en/latest/][flycheck homepage]]
+
+#+BEGIN_SRC emacs-lisp
+  (use-package flycheck
+    :ensure t
+    :init
+    (global-flycheck-mode)
+    ;;(add-hook 'after-init-hook #'global-flycheck-mode)
+    (add-hook 'c++-mode-hook (lambda () (setq flycheck-gcc-language-standard "c++11")))
+    (add-hook 'c++-mode-hook
+              (lambda () (setq flycheck-clang-include-path
+                               (list (expand-file-name "/usr/include")
+                                     (expand-file-name "/usr/include/qt5/QtCore")
+                                     (expand-file-name "/usr/include/qt5/QtWidgets")
+                                     (expand-file-name "/usr/include/qt5/QtGui"))))))
+#+END_SRC 
+
+* Smartparens
+[[https://github.com/Fuco1/smartparens][
+Smartparens homepage]]
+
+#+BEGIN_SRC emacs-lisp
+  (use-package smartparens 
+    :ensure t
+    :config
+    (use-package smartparens-config)
+    (smartparens-global-mode t)
+    (show-smartparens-global-mode t)
+    :bind
+    (
+     ("C-<down>" . sp-down-sexp)
+     ("C-<up>" . sp-up-sexp)
+     ("M-<down>" . sp-backward-down-sexp)
+     ("M-<up>" . sp-backward-up-sexp)
+     ("C-M-a" . sp-beginning-of-sexp)
+     ("C-M-e" . sp-end-of-sexp)
+   
+     ("C-M-f" . sp-forward-sexp)
+     ("C-M-b" . sp-backward-sexp)
+     ("C-M-n" . sp-next-sexp)
+     ("C-M-p" . sp-previous-sexp)
+   
+     ("C-M-k" . sp-kill-sexp)
+     ("C-k" . sp-kill-hybrid-sexp)
+     ("M-k" . sp-backward-kill-sexp)
+     ("C-M-w" . sp-copy-sexp)
+   
+     ("C-M-d" . delete-sexp)
+     ("M-[" . sp-backward-unwrap-sexp)
+     ("M-]" . sp-unwrap-sexp)
+   
+     ("C-x C-t" . sp-transpose-hybrid-sexp)
+   
+     ("C-c ("  . wrap-with-parens)
+     ("C-c ["  . wrap-with-brackets)
+     ("C-c {"  . wrap-with-braces)
+     ("C-c '"  . wrap-with-single-quotes)
+     ("C-c \"" . wrap-with-double-quotes)
+     ("C-c _"  . wrap-with-underscores)
+     ("C-c `"  . wrap-with-back-quotes)
+     )
+    )
+#+END_SRC
+
+* Better search
+
+#+BEGIN_SRC emacs-lisp
+(use-package counsel
+  :ensure t
+  )
+
+(use-package ivy
+  :ensure t
+  :diminish (ivy-mode)
+  :bind (("C-x b" . ivy-switch-buffer))
+  :config
+  (ivy-mode 1)
+  (setq ivy-use-virtual-buffer t)
+  (setq ivy-display-style 'fancy))
+
+;;http://oremacs.com/swiper/
+(use-package swiper
+  :ensure try
+  :bind (("C-s" . swiper)
+	 ("C-r" . swiper)
+	 ("C-c C-r" . ivy-resume)
+	 ("M-x" . counsel-M-x)
+	 ("C-x C-f" . counsel-find-file))
+  :config
+  (progn
+    (ivy-mode 1)
+    (setq ivy-use-virtual-buffer t)
+    (setq ivy-display-style 'fancy)
+    (define-key read-expression-map (kbd "C-r") 'counsel-expression-history)
+    ))
+
+;;https://github.com/abo-abo/avy
+(use-package avy
+  :ensure t
+  :bind ("M-s" . avy-goto-char))
+
+#+END_SRC
+
+* C++ development
+
+[[https://company-mode.github.io/][company homepage]]
+[[https://github.com/Andersbakken/rtags][rtags homepage]]
+[[https://github.com/Sarcasm/irony-mode][irony homepage]]
+[[https://github.com/Sarcasm/company-irony][company-irony homepage]]
+[[https://github.com/sonatard/clang-format][clang-format homepage]]
+
+#+BEGIN_SRC emacs-lisp
+    ;;use only spaces in indentation
+  (progn
+    (setq-default indent-tabs-mode nil))
+
+  (setq c-default-style "k&r"
+        c-basic-offset 4)
+
+  (use-package company
+    :ensure t
+    :config
+    (setq company-idle-delay 0)
+    (setq company-minimum-prefix-length 3)
+    (global-company-mode t))
+
+  (use-package rtags
+    :ensure t)
+
+  (use-package company-rtags
+    :ensure t
+    :config
+    (setq rtags-completions-enabled t)
+    (eval-after-load 'company
+      '(add-to-list
+        'company-backends 'company-rtags))
+    (setq rtags-autostart-diagnostics t)
+    (rtags-enable-standard-keybindings))
+
+  (use-package irony
+    :ensure t
+    :config
+    (when (boundp 'w32-pipe-read-delay)
+      (setq w32-pipe-read-delay 0))
+    (when (boundp 'w32-pipe-buffer-size)
+      (setq irony-server-w32-pipe-buffer-size(* 64 1024)))
+    (add-hook 'c-mode-common-hook 'irony-mode)
+    (add-hook 'irony-mode-hook 'irony-cdb-autosetup-compile-options))
+
+  (use-package company-irony
+    :ensure t
+    :config
+    (add-hook 'irony-mode-hook 'company-irony-setup-begin-commands)
+    (setq company-backend (delete 'company-semantic company-backends)))
+
+  (use-package company-irony-c-headers
+    :ensure t
+    :config
+    (eval-after-load 'company
+      '(add-to-list
+        'company-backends '(company-irony-c-headers company-irony))))
+
+  (use-package clang-format
+    :ensure t
+    :init
+    (setq clang-format-style-option "Google"))
+
+  (use-package cmake-mode
+    :ensure t)
+
+  (use-package cmake-ide
+    :ensure t
+    :config
+    (cmake-ide-setup))
+
+  (use-package flycheck-rtags
+    :ensure t
+    :config
+    (defun my-flycheck-rtags-setup ()
+      (flycheck-select-checker 'rtags)
+      (setq-local flycheck-highlighting-mode nil) ;;RTags creates more accurate overlays.
+      (setq-local flycheck-check-syntax-automatically nil))
+    (add-hook 'c-mode-common-hook #'my-flycheck-rtags-setup))
+
+  (use-package flycheck-irony
+    :ensure t
+    :config
+    (eval-after-load 'flycheck
+      '(add-hook 'flycheck-mode-hook #'flycheck-irony-setup)))
+#+END_SRC 
+
+* Python development
+
+[[https://github.com/jorgenschaefer/elpy][elpy homepage]]
+
+#+BEGIN_SRC emacs-lisp  
+    (use-package elpy
+      :ensure t
+      :config
+      (elpy-enable)
+      (setq python-shell-interpreter "jupyter"
+            python-shell-interpreter-args "console --simple-prompt"
+            python-shell-prompt-detect-failure-warning nil)
+      (add-to-list 'python-shell-completion-native-disabled-interpreters "jupyter"))
+
+    (use-package py-autopep8
+      :ensure t
+      :config
+      (add-hook 'elpy-mode-hook 'py-autopep8-enable-on-save))
+#+END_SRC
+
+* Yasnippet
+
+#+BEGIN_SRC emacs-lisp
+    (use-package yasnippet-snippets
+      :ensure t)
+
+    (use-package yasnippet
+      :ensure t
+      :config
+      (yas-reload-all)
+      (add-hook 'c-mode-hook 'yas-minor-mode)
+      (add-hook 'c++-mode-hook 'yas-minor-mode)
+      (add-hook 'objc-mode-hook 'yas-minor-mode)
+      (add-hook 'java-mode-hook 'yas-minor-mode)
+      (add-hook 'python-mode-hook 'yas-minor-mode)
+      (add-hook 'org-mode-hook 'yas-minor-mode))
+#+END_SRC
+
+* IRC client
+
+#+BEGIN_SRC emacs-lisp
+  (use-package erc
+    :ensure t)
+#+END_SRC
+
+
+#+RESULTS:
+
+
