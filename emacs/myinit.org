@@ -1,9 +1,11 @@
+
   Author: Jakub Opatowski
   mailto: [[jakub.opatowski@gmail.com]]
 
 * Readme
 
   [[https://www.masteringemacs.org/article/spotlight-use-package-a-declarative-configuration-tool][How to add and configure new package]]
+  [[https://github.com/jwiegley/use-package][use-package homepage]]
 
 tltr
 
@@ -125,25 +127,6 @@ lisp evaluator know about things like function and symbol declarations.
   (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1))))
 #+END_SRC
 
-* Flycheck
-
-[[https://www.flycheck.org/en/latest/][flycheck homepage]]
-
-#+BEGIN_SRC emacs-lisp
-  (use-package flycheck
-    :ensure t
-    :init
-    (global-flycheck-mode)
-    ;;(add-hook 'after-init-hook #'global-flycheck-mode)
-    (add-hook 'c++-mode-hook (lambda () (setq flycheck-gcc-language-standard "c++11")))
-    (add-hook 'c++-mode-hook
-              (lambda () (setq flycheck-clang-include-path
-                               (list (expand-file-name "/usr/include")
-                                     (expand-file-name "/usr/include/qt5/QtCore")
-                                     (expand-file-name "/usr/include/qt5/QtWidgets")
-                                     (expand-file-name "/usr/include/qt5/QtGui"))))))
-#+END_SRC 
-
 * Smartparens
 [[https://github.com/Fuco1/smartparens][
 Smartparens homepage]]
@@ -211,7 +194,6 @@ Smartparens homepage]]
 (use-package swiper
   :ensure try
   :bind (("C-s" . swiper)
-	 ("C-r" . swiper)
 	 ("C-c C-r" . ivy-resume)
 	 ("M-x" . counsel-M-x)
 	 ("C-x C-f" . counsel-find-file))
@@ -220,7 +202,7 @@ Smartparens homepage]]
     (ivy-mode 1)
     (setq ivy-use-virtual-buffer t)
     (setq ivy-display-style 'fancy)
-    (define-key read-expression-map (kbd "C-r") 'counsel-expression-history)
+    (define-key read-expression-map (kbd C-r) 'counsel-expression-history)
     ))
 
 ;;https://github.com/abo-abo/avy
@@ -232,90 +214,60 @@ Smartparens homepage]]
 
 * C++ development
 
-[[https://company-mode.github.io/][company homepage]]
-[[https://github.com/Andersbakken/rtags][rtags homepage]]
-[[https://github.com/Sarcasm/irony-mode][irony homepage]]
-[[https://github.com/Sarcasm/company-irony][company-irony homepage]]
-[[https://github.com/sonatard/clang-format][clang-format homepage]]
+Based on [[https://github.com/cquery-project/cquery][language server protocol]].
+[[https://www.flycheck.org/en/latest/][flycheck homepage]]
+[[https://github.com/emacs-lsp/lsp-mode][lsp-mode homepage]]
+[[https://github.com/emacs-lsp/lsp-ui][lsp-ui homepage]]
+[[https://github.com/cquery-project/emacs-cquery][emacs-cquery homepage]]
 
 #+BEGIN_SRC emacs-lisp
-    ;;use only spaces in indentation
+  ;;use only spaces in indentation
   (progn
     (setq-default indent-tabs-mode nil))
 
   (setq c-default-style "k&r"
         c-basic-offset 4)
 
+  (use-package flycheck
+    :ensure t
+    :config
+    (global-flycheck-mode))
+
   (use-package company
     :ensure t
     :config
-    (setq company-idle-delay 0)
-    (setq company-minimum-prefix-length 3)
-    (global-company-mode t))
+    (add-hook 'after-init-hook 'global-company-mode)
+    (setq company-ide-delay 0)
+    (setq company-minimum-prefix-length 1)
+    (define-key company-active-map (kbd "M-n") nil)
+    (define-key company-active-map (kbd "M-p") nil)
+    (define-key company-active-map (kbd "C-n") #'company-select-next)
+    (define-key company-active-map (kbd "C-p") #'company-select-previous))
 
-  (use-package rtags
-    :ensure t)
-
-  (use-package company-rtags
+  (use-package lsp-mode
     :ensure t
-    :config
-    (setq rtags-completions-enabled t)
-    (eval-after-load 'company
-      '(add-to-list
-        'company-backends 'company-rtags))
-    (setq rtags-autostart-diagnostics t)
-    (rtags-enable-standard-keybindings))
+    :hook 
+    (prog-mode . lsp)
+    :commands lsp)
 
-  (use-package irony
+  (use-package lsp-ui
     :ensure t
-    :config
-    (when (boundp 'w32-pipe-read-delay)
-      (setq w32-pipe-read-delay 0))
-    (when (boundp 'w32-pipe-buffer-size)
-      (setq irony-server-w32-pipe-buffer-size(* 64 1024)))
-    (add-hook 'c-mode-common-hook 'irony-mode)
-    (add-hook 'irony-mode-hook 'irony-cdb-autosetup-compile-options))
+    :hook 
+    (lsp-mode . lsp-ui)
+    (prog-mode . flycheck-mode))
 
-  (use-package company-irony
-    :ensure t
-    :config
-    (add-hook 'irony-mode-hook 'company-irony-setup-begin-commands)
-    (setq company-backend (delete 'company-semantic company-backends)))
+  (defun cquery//enable ()
+    (condition-case nil
+        (lsp)
+      (user-error nil)))
 
-  (use-package company-irony-c-headers
-    :ensure t
-    :config
-    (eval-after-load 'company
-      '(add-to-list
-        'company-backends '(company-irony-c-headers company-irony))))
-
-  (use-package clang-format
+  (use-package cquery
     :ensure t
     :init
-    (setq clang-format-style-option "Google"))
-
-  (use-package cmake-mode
-    :ensure t)
-
-  (use-package cmake-ide
-    :ensure t
+    (add-hook 'prog-mode-hook  #'cquery//enable)
     :config
-    (cmake-ide-setup))
-
-  (use-package flycheck-rtags
-    :ensure t
-    :config
-    (defun my-flycheck-rtags-setup ()
-      (flycheck-select-checker 'rtags)
-      (setq-local flycheck-highlighting-mode nil) ;;RTags creates more accurate overlays.
-      (setq-local flycheck-check-syntax-automatically nil))
-    (add-hook 'c-mode-common-hook #'my-flycheck-rtags-setup))
-
-  (use-package flycheck-irony
-    :ensure t
-    :config
-    (eval-after-load 'flycheck
-      '(add-hook 'flycheck-mode-hook #'flycheck-irony-setup)))
+    (setq cquery-ececutable "~/Projekty/cquery/instalka/bin/cquery.exe")
+    (setq cquery-extra-init-params '(:index (:comments 2) :cacheFormat "msgpack" :completion (:detailedLabel t))))
 #+END_SRC 
 
 * Python development
