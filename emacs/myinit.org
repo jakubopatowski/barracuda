@@ -1,4 +1,5 @@
 
+
   Author: Jakub Opatowski
   mailto: [[jakub.opatowski@gmail.com]]
 
@@ -31,6 +32,7 @@ lisp evaluator know about things like function and symbol declarations.
   (setq make-backup-files nil) ;stop creating backup~ files
   (setq auto-save-default nil) ;stop creating #autosave# files
   (setq column-number-mode t)
+  (global-set-key "\C-c\C-d" "\C-a\C- \C-n\M-w\C-y")
 #+END_SRC
 
 * Small packages
@@ -194,7 +196,7 @@ Smartparens homepage]]
 (use-package swiper
   :ensure try
   :bind (("C-s" . swiper)
-	 ("C-c C-r" . ivy-resume)
+	 ;;("C-c C-r" . ivy-resume)
 	 ("M-x" . counsel-M-x)
 	 ("C-x C-f" . counsel-find-file))
   :config
@@ -202,7 +204,7 @@ Smartparens homepage]]
     (ivy-mode 1)
     (setq ivy-use-virtual-buffer t)
     (setq ivy-display-style 'fancy)
-    (define-key read-expression-map (kbd C-r) 'counsel-expression-history)
+    ;;(define-key read-expression-map (kbd C-r) 'counsel-expression-history)
     ))
 
 ;;https://github.com/abo-abo/avy
@@ -229,9 +231,7 @@ Based on [[https://github.com/cquery-project/cquery][language server protocol]].
         c-basic-offset 4)
 
   (use-package flycheck
-    :ensure t
-    :config
-    (global-flycheck-mode))
+    :ensure t)
 
   (use-package company
     :ensure t
@@ -244,17 +244,33 @@ Based on [[https://github.com/cquery-project/cquery][language server protocol]].
     (define-key company-active-map (kbd "C-n") #'company-select-next)
     (define-key company-active-map (kbd "C-p") #'company-select-previous))
 
+  ;; (use-package irony
+  ;;   :ensure t
+  ;;   :config
+  ;;   (add-hook 'c-mode-hook 'irony-mode)
+  ;;   (add-hook 'c++-mode-hook 'irony-mode)
+  ;;   (add-hook 'irony-mode-hook 'irony-cdb-autosetup-compile-options))
+
+  ;; (use-package company-irony
+  ;;   :ensure t
+  ;;   :config
+  ;;   (add-to-list 'company-backends 'company-irony))
+
   (use-package lsp-mode
     :ensure t
-    :hook 
-    (prog-mode . lsp)
-    :commands lsp)
+    :config
+    (add-hook 'prog-mode-hook #'lsp))
 
   (use-package lsp-ui
     :ensure t
-    :hook 
-    (lsp-mode . lsp-ui)
-    (prog-mode . flycheck-mode))
+    :config
+    (add-hook 'lsp-mode-hook 'lsp-ui-mode)
+    (add-hook 'prog-mode-hook 'flycheck-mode))
+
+  (use-package company-lsp
+    :ensure t
+    :config
+    (push 'company-lsp company-backends))
 
   (defun cquery//enable ()
     (condition-case nil
@@ -263,10 +279,10 @@ Based on [[https://github.com/cquery-project/cquery][language server protocol]].
 
   (use-package cquery
     :ensure t
-    :init
-    (add-hook 'prog-mode-hook  #'cquery//enable)
     :config
-    (setq cquery-ececutable "~/Projekty/cquery/instalka/bin/cquery.exe")
+    (add-hook 'prog-mode-hook  #'cquery//enable)
+    (setq cquery-ececutable "c:/Jopa/HOME/Projekty/cquery/instalka/bin/cquery.exe")
+    (setq cquery-extra-args '("--log-file-append=c:/Jopa/HOME/Projekty/cquery/instalka/cq.log"))
     (setq cquery-extra-init-params '(:index (:comments 2) :cacheFormat "msgpack" :completion (:detailedLabel t))))
 #+END_SRC 
 
