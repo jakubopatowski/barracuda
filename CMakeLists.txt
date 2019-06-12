@@ -16,6 +16,7 @@ if (UNIX)
 else()
   MESSAGE(status "Setting MSVC flags")
   SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /EHc")
+  SET(CXX=clang-cl)
 endif()
 MESSAGE(status "** CMAKE_CXX_FLAGS: ${CMAKE_CXX_FLAGS}")
 
@@ -27,23 +28,26 @@ INCLUDE_DIRECTORIES("${PROJECT_SOURCE_DIR}")
 #=====================
 
 # set boost includes
-SET(Boost_USE_STATIC_LIBS      OFF)  # only find static libs
+SET(Boost_USE_STATIC_LIBS      ON)  # only find static libs
 SET(Boost_USE_DEBUG_LIBS       ON)   # ignore debug libs and
 SET(Boost_USE_RELEASE_LIBS     OFF)  # only find release libs
 SET(Boost_USE_MULTITHREADED    ON)
 SET(Boost_USE_STATIC_RUNTIME   OFF)
-SET(BOOST_LIBRARYDIR           "/usr/lib64")
+IF(UNIX)
+  SET(BOOST_LIBRARYDIR         "/usr/lib64")
+ELSEIF(MSVC)
+  SET(BOOST_ROOT               "c:/Jopa/HOME/Projekty/boost/boost_1_69_0")
+ENDIF()
 
 FIND_PACKAGE(Boost REQUIRED COMPONENTS date_time)
+#INCLUDE_DIRECTORIES("${Boost_INCLUDE_DIRS}")
 
 MESSAGE("==============================================================")
 MESSAGE("                        ..:: BOOST ::..                       ")
 MESSAGE("==============================================================")
-MESSAGE("PROJEDT_BINARY_DIR:         ${PROJECT_BINARY_DIR}")
-MESSAGE("BOOST_ROOT:                 ${BOOST_ROOT}")
-MESSAGE("BOOST_INCLUDEDIR:           ${BOOST_INCLUDEDIR}")
-MESSAGE("BOOST_LIBRARYDIR:           ${BOOST_LIBRARYDIR}")
 MESSAGE("Boost_FOUND:                ${Boost_FOUND}")
+MESSAGE("Boost_VERSION:              ${Boost_VERSION}")
+MESSAGE("BOOST_ROOT:                 ${BOOST_ROOT}")
 MESSAGE("Boost_INCLUDE_DIRS:         ${Boost_INCLUDE_DIRS}")
 MESSAGE("Boost_LIBRARY_DIRS:         ${Boost_LIBRARY_DIRS}")
 MESSAGE("Boost_LIBRARIES:            ${Boost_LIBRARIES}")
@@ -54,19 +58,27 @@ MESSAGE("==============================================================")
 #=====================
 
 FIND_PACKAGE(Qt5 COMPONENTS REQUIRED Core Gui Widgets)
+#INCLUDE_DIRECTORIES("${Qt5Widgets_INCLUDE_DIRS}")
+
+MESSAGE("==============================================================")
+MESSAGE("                   ..:: Qt5 Widgets::..                       ")
+MESSAGE("==============================================================")
+MESSAGE("Qt5Widgets_FOUND:           ${Qt5Widgets_FOUND}")
+MESSAGE("Qt5Widgets_VERSION:         ${Qt5Widgets_VERSION}")
+MESSAGE("Qt5Widgets_INCLUDE_DIRS:    ${Qt5Widgets_INCLUDE_DIRS}")
+MESSAGE("Qt5Widgets_LIBRARIES:       ${Qt5Widgets_LIBRARIES}")
+MESSAGE("==============================================================")
 
 SET(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-
-
-set(project_sources
+SET(PROJECT_SOURCES
   mainwindow.cpp
   main.cpp)
 
-set(project_headers
+SET(project_headers
   mainwindow.h)
 
-set(project_ui
+SET(project_ui
   mainwindow.ui)
 
 # wrap the ui file to a c++ header
