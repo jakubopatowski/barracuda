@@ -10,14 +10,13 @@ CONFIGURE_FILE (
   "${PROJECT_SOURCE_DIR}/ProgramConfig.h")
 
 # Setup flags for compilers
-if (UNIX)
+IF(UNIX)
   MESSAGE(status "Setting GCC flags")
   SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fexceptions -g -Wall")
-else()
+ELSEIF(MSVC)
   MESSAGE(status "Setting MSVC flags")
   SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /EHc")
-  SET(CXX=clang-cl)
-endif()
+ENDIF()
 MESSAGE(status "** CMAKE_CXX_FLAGS: ${CMAKE_CXX_FLAGS}")
 
 # set project includes
@@ -40,7 +39,7 @@ ELSEIF(MSVC)
 ENDIF()
 
 FIND_PACKAGE(Boost REQUIRED COMPONENTS date_time)
-#INCLUDE_DIRECTORIES("${Boost_INCLUDE_DIRS}")
+INCLUDE_DIRECTORIES("${Boost_INCLUDE_DIRS}")
 
 MESSAGE("==============================================================")
 MESSAGE("                        ..:: BOOST ::..                       ")
@@ -58,7 +57,7 @@ MESSAGE("==============================================================")
 #=====================
 
 FIND_PACKAGE(Qt5 COMPONENTS REQUIRED Core Gui Widgets)
-#INCLUDE_DIRECTORIES("${Qt5Widgets_INCLUDE_DIRS}")
+INCLUDE_DIRECTORIES("${Qt5Widgets_INCLUDE_DIRS}")
 
 MESSAGE("==============================================================")
 MESSAGE("                   ..:: Qt5 Widgets::..                       ")
@@ -71,7 +70,7 @@ MESSAGE("==============================================================")
 
 SET(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-SET(PROJECT_SOURCES
+SET(project_sources
   mainwindow.cpp
   main.cpp)
 
