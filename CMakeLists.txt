@@ -84,6 +84,10 @@ SET(project_ui
 qt5_wrap_ui(ui_wrap ${project_ui})
 qt5_wrap_cpp(moc_sources ${project_headers})
 
+#=====================
+# ..:: Visual Studio Setup ::..
+#=====================
+
 ADD_EXECUTABLE(${PROJECT_NAME}
   ${project_sources}
   ${project_headers}
@@ -98,9 +102,15 @@ TARGET_LINK_LIBRARIES(${PROJECT_NAME}
   Qt5::Widgets)
 
 # auto copy dlls if on windows
-if(WIN32)
+if(MSVS)
   add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_if_different $<TARGET_FILE:Qt5::Core> $<TARGET_FILE_DIR:${PROJECT_NAME}>
     COMMAND ${CMAKE_COMMAND} -E copy_if_different $<TARGET_FILE:Qt5::Gui> $<TARGET_FILE_DIR:${PROJECT_NAME}>
     COMMAND ${CMAKE_COMMAND} -E copy_if_different $<TARGET_FILE:Qt5::Widgets> $<TARGET_FILE_DIR:${PROJECT_NAME}> )
-endif(WIN32)
+  
+  add_custom_target(setupMSVS2015x64BuildEnv
+    COMMAND c:/WINDOWS/system32/cmd.exe ARGS /k "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" x86_amd64)
+    #COMMAND "C:\WINDOWS\system32\cmd.exe /k \"\"C:\\Program Files (x86)\\Microsoft Visual Studio 14.0\\VC\\vcvarsall.bat\"\" x86_amd64")
+
+  add_dependencies(setupMSVS2015x64BuildEnv ${PROJECT_NAME})
+endif()

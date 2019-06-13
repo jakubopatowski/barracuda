@@ -33,6 +33,9 @@ lisp evaluator know about things like function and symbol declarations.
   (setq auto-save-default nil) ;stop creating #autosave# files
   (setq column-number-mode t)
   (global-set-key "\C-c\C-d" "\C-a\C- \C-n\M-w\C-y")
+  ;;(setq explicit-shell-file-name "c:/Windows/System32/cmd.exe /k \"\"C:\\Program Files (x86)\\Microsoft Visual Studio 14.0\\VC\\vcvarsall.bat\"\" x86_amd64") 
+;;C:\Windows\SysWOW64\WindowsPowerShell\v1.0\powershell.exe -NoExit -Command "& { Import-Module .\Common7\Tools\vsdevshell\Microsoft.VisualStudio.DevShell.dll; Enter-VsDevShell -InstanceId d459dda0}"
+;;%comspec% /k "C:\Program Files (x86)\Microsoft Visual Studio\2019\Preview\VC\Auxiliary\Build\vcvars64.bat"
 #+END_SRC
 
 * Small packages
@@ -130,8 +133,8 @@ lisp evaluator know about things like function and symbol declarations.
 #+END_SRC
 
 * Smartparens
-[[https://github.com/Fuco1/smartparens][
-Smartparens homepage]]
+
+[[https://github.com/Fuco1/smartparens][Smartparens homepage]]
 
 #+BEGIN_SRC emacs-lisp
   (use-package smartparens 
@@ -216,11 +219,13 @@ Smartparens homepage]]
 
 * C++ development
 
-Based on [[https://github.com/cquery-project/cquery][language server protocol]].
+Based on [[https://microsoft.github.io/language-server-protocol/][language server protocol]].
 [[https://www.flycheck.org/en/latest/][flycheck homepage]]
+[[https://microsoft.github.io/language-server-protocol/specification][Language Server Protocol Specification]]
 [[https://github.com/emacs-lsp/lsp-mode][lsp-mode homepage]]
 [[https://github.com/emacs-lsp/lsp-ui][lsp-ui homepage]]
 [[https://github.com/cquery-project/emacs-cquery][emacs-cquery homepage]]
+[[https://sarcasm.github.io/notes/dev/compilation-database.html][compilation database manual]]
 
 #+BEGIN_SRC emacs-lisp
   ;;use only spaces in indentation
@@ -231,7 +236,11 @@ Based on [[https://github.com/cquery-project/cquery][language server protocol]].
         c-basic-offset 4)
 
   (use-package flycheck
-    :ensure t)
+    :ensure t
+    :config
+    (add-hook 'c++-mode-hook
+              (lambda ()
+                (setq flymake-diagnostic-functions (list 'lsp--flymake-backend)))))
 
   (use-package company
     :ensure t
@@ -281,8 +290,9 @@ Based on [[https://github.com/cquery-project/cquery][language server protocol]].
     :ensure t
     :config
     (add-hook 'prog-mode-hook  #'cquery//enable)
-    (setq cquery-ececutable "c:/Jopa/HOME/Projekty/cquery/instalka/bin/cquery.exe")
-    (setq cquery-extra-args '("--log-file-append=c:/Jopa/HOME/Projekty/cquery/instalka/cq.log"))
+    (setq cquery-ececutable "cquery.exe")
+    (setq cquery-extra-args '("--log-file=~/Logs/cq.log"))
+    ;;(setq cquery-extra-args '("--log-file-append=~/Logs/cq.log"))
     (setq cquery-extra-init-params '(:index (:comments 2) :cacheFormat "msgpack" :completion (:detailedLabel t))))
 #+END_SRC 
 
@@ -322,13 +332,6 @@ Based on [[https://github.com/cquery-project/cquery][language server protocol]].
       (add-hook 'java-mode-hook 'yas-minor-mode)
       (add-hook 'python-mode-hook 'yas-minor-mode)
       (add-hook 'org-mode-hook 'yas-minor-mode))
-#+END_SRC
-
-* IRC client
-
-#+BEGIN_SRC emacs-lisp
-  (use-package erc
-    :ensure t)
 #+END_SRC
 
 
