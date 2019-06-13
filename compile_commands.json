@@ -1,2 +1,19 @@
 [
+{
+  "directory": "/home/jopa/Projekty/barracuda/build",
+  "command": "/usr/bin/c++  -DQT_CORE_LIB -DQT_GUI_LIB -DQT_NO_DEBUG -DQT_WIDGETS_LIB -I. -I../ -isystem /usr/include/qt5 -isystem /usr/include/qt5/QtWidgets -isystem /usr/include/qt5/QtGui -isystem /usr/include/qt5/QtCore -isystem /usr/lib64/qt5/mkspecs/linux-g++   -fexceptions -g -Wall   -fPIC -std=gnu++11 -o CMakeFiles/Barracuda.dir/mainwindow.cpp.o -c /home/jopa/Projekty/barracuda/mainwindow.cpp",
+  "file": "/home/jopa/Projekty/barracuda/mainwindow.cpp"
+},
+
+{
+  "directory": "/home/jopa/Projekty/barracuda/build",
+  "command": "/usr/bin/c++  -DQT_CORE_LIB -DQT_GUI_LIB -DQT_NO_DEBUG -DQT_WIDGETS_LIB -I. -I../ -isystem /usr/include/qt5 -isystem /usr/include/qt5/QtWidgets -isystem /usr/include/qt5/QtGui -isystem /usr/include/qt5/QtCore -isystem /usr/lib64/qt5/mkspecs/linux-g++   -fexceptions -g -Wall   -fPIC -std=gnu++11 -o CMakeFiles/Barracuda.dir/main.cpp.o -c /home/jopa/Projekty/barracuda/main.cpp",
+  "file": "/home/jopa/Projekty/barracuda/main.cpp"
+},
+
+{
+  "directory": "/home/jopa/Projekty/barracuda/build",
+  "command": "/usr/bin/c++  -DQT_CORE_LIB -DQT_GUI_LIB -DQT_NO_DEBUG -DQT_WIDGETS_LIB -I. -I../ -isystem /usr/include/qt5 -isystem /usr/include/qt5/QtWidgets -isystem /usr/include/qt5/QtGui -isystem /usr/include/qt5/QtCore -isystem /usr/lib64/qt5/mkspecs/linux-g++   -fexceptions -g -Wall   -fPIC -std=gnu++11 -o CMakeFiles/Barracuda.dir/moc_mainwindow.cpp.o -c /home/jopa/Projekty/barracuda/build/moc_mainwindow.cpp",
+  "file": "/home/jopa/Projekty/barracuda/build/moc_mainwindow.cpp"
+}
 ]

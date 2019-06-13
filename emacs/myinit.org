@@ -1,4 +1,4 @@
-
+n
 
   Author: Jakub Opatowski
   mailto: [[jakub.opatowski@gmail.com]]
@@ -235,13 +235,6 @@ Based on [[https://microsoft.github.io/language-server-protocol/][language serve
   (setq c-default-style "k&r"
         c-basic-offset 4)
 
-  (use-package flycheck
-    :ensure t
-    :config
-    (add-hook 'c++-mode-hook
-              (lambda ()
-                (setq flymake-diagnostic-functions (list 'lsp--flymake-backend)))))
-
   (use-package company
     :ensure t
     :config
@@ -253,47 +246,24 @@ Based on [[https://microsoft.github.io/language-server-protocol/][language serve
     (define-key company-active-map (kbd "C-n") #'company-select-next)
     (define-key company-active-map (kbd "C-p") #'company-select-previous))
 
-  ;; (use-package irony
-  ;;   :ensure t
-  ;;   :config
-  ;;   (add-hook 'c-mode-hook 'irony-mode)
-  ;;   (add-hook 'c++-mode-hook 'irony-mode)
-  ;;   (add-hook 'irony-mode-hook 'irony-cdb-autosetup-compile-options))
-
-  ;; (use-package company-irony
-  ;;   :ensure t
-  ;;   :config
-  ;;   (add-to-list 'company-backends 'company-irony))
-
   (use-package lsp-mode
     :ensure t
-    :config
-    (add-hook 'prog-mode-hook #'lsp))
+    :commands lsp)
 
   (use-package lsp-ui
     :ensure t
-    :config
-    (add-hook 'lsp-mode-hook 'lsp-ui-mode)
-    (add-hook 'prog-mode-hook 'flycheck-mode))
+    :commands lsp-ui-mode)
 
   (use-package company-lsp
     :ensure t
-    :config
-    (push 'company-lsp company-backends))
+    :commands company-lsp)
 
-  (defun cquery//enable ()
-    (condition-case nil
-        (lsp)
-      (user-error nil)))
-
-  (use-package cquery
-    :ensure t
+  (use-package ccls
+    :hook
+    ((c-mode c++-mode objc-mode) .
+     (lambda () (require 'ccls) (lsp)))
     :config
-    (add-hook 'prog-mode-hook  #'cquery//enable)
-    (setq cquery-ececutable "cquery.exe")
-    (setq cquery-extra-args '("--log-file=~/Logs/cq.log"))
-    ;;(setq cquery-extra-args '("--log-file-append=~/Logs/cq.log"))
-    (setq cquery-extra-init-params '(:index (:comments 2) :cacheFormat "msgpack" :completion (:detailedLabel t))))
+    (setq ccls-executable "/home/jopa/Projekty/ccls/Release/ccls"))
 #+END_SRC 
 
 * Python development

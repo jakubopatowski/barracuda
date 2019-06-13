@@ -17,6 +17,7 @@ ELSEIF(MSVC)
   MESSAGE(status "Setting MSVC flags")
   SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /EHc")
 ENDIF()
+SET(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 MESSAGE(status "** CMAKE_CXX_FLAGS: ${CMAKE_CXX_FLAGS}")
 
 # set project includes
@@ -27,7 +28,7 @@ INCLUDE_DIRECTORIES("${PROJECT_SOURCE_DIR}")
 #=====================
 
 # set boost includes
-SET(Boost_USE_STATIC_LIBS      ON)  # only find static libs
+SET(Boost_USE_STATIC_LIBS      OFF)  # only find static libs
 SET(Boost_USE_DEBUG_LIBS       ON)   # ignore debug libs and
 SET(Boost_USE_RELEASE_LIBS     OFF)  # only find release libs
 SET(Boost_USE_MULTITHREADED    ON)

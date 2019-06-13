@@ -33,7 +33,9 @@
 
 # Directories
 build
+.ccls-cache
 
 # Files
 ProgramConfig.h
 emacs/myinit.el
+compile_commands.json
