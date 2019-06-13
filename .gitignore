@@ -36,3 +36,4 @@ build
 
 # Files
 ProgramConfig.h
+emacs/myinit.el
