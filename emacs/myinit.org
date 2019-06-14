@@ -203,51 +203,57 @@ lisp evaluator know about things like function and symbol declarations.
 * C++ development
 
 Based on [[https://microsoft.github.io/language-server-protocol/][language server protocol]].
+[[https://sarcasm.github.io/notes/dev/compilation-database.html][compilation database manual]]
 [[https://www.flycheck.org/en/latest/][flycheck homepage]]
 [[https://microsoft.github.io/language-server-protocol/specification][Language Server Protocol Specification]]
 [[https://github.com/emacs-lsp/lsp-mode][lsp-mode homepage]]
 [[https://github.com/emacs-lsp/lsp-ui][lsp-ui homepage]]
-[[https://github.com/cquery-project/emacs-cquery][emacs-cquery homepage]]
-[[https://sarcasm.github.io/notes/dev/compilation-database.html][compilation database manual]]
+[[https://github.com/MaskRay/ccls][ccls homepage]]
 
 #+BEGIN_SRC emacs-lisp
-    ;;use only spaces in indentation
-    (progn
-      (setq-default indent-tabs-mode nil))
+  ;;use only spaces in indentation
+  (progn
+    (setq-default indent-tabs-mode nil))
 
-    (setq c-default-style "k&r"
-          c-basic-offset 4)
+  (setq c-default-style "k&r"
+        c-basic-offset 4)
 
-    (use-package company
-      :ensure t
-      :config
-      (add-hook 'after-init-hook 'global-company-mode)
-      (setq company-ide-delay 0)
-      (setq company-minimum-prefix-length 1)
-      (define-key company-active-map (kbd "M-n") nil)
-      (define-key company-active-map (kbd "M-p") nil)
-      (define-key company-active-map (kbd "C-n") #'company-select-next)
-      (define-key company-active-map (kbd "C-p") #'company-select-previous))
+  (use-package cmake-font-lock
+    :ensure t
+    :config
+    (autoload 'cmake-font-lock-activate "cmake-font-lock" nil t)
+    (add-hook 'cmake-mode-hook 'cmake-font-lock-activate))
 
-    (use-package lsp-mode
-      :ensure t
-      :commands lsp)
+  (use-package company
+    :ensure t
+    :config
+    (add-hook 'after-init-hook 'global-company-mode)
+    (setq company-ide-delay 0)
+    (setq company-minimum-prefix-length 1)
+    (define-key company-active-map (kbd "M-n") nil)
+    (define-key company-active-map (kbd "M-p") nil)
+    (define-key company-active-map (kbd "C-n") #'company-select-next)
+    (define-key company-active-map (kbd "C-p") #'company-select-previous))
 
-    (use-package lsp-ui
-      :ensure t
-      :commands lsp-ui-mode)
+  (use-package lsp-mode
+    :ensure t
+    :commands lsp)
 
-    (use-package company-lsp
-      :ensure t
-      :commands company-lsp)
+  (use-package lsp-ui
+    :ensure t
+    :commands lsp-ui-mode)
 
-    (use-package ccls
-      :ensure t
-      :hook
-      ((c-mode c++-mode objc-mode) .
-       (lambda () (require 'ccls) (lsp)))
-      :config
-      (setq ccls-executable "/home/jopa/Projekty/ccls/Release/ccls"))
+  (use-package company-lsp
+    :ensure t
+    :commands company-lsp)
+
+  (use-package ccls
+    :ensure t
+    :hook
+    ((c-mode c++-mode objc-mode) .
+     (lambda () (require 'ccls) (lsp)))
+    :config
+    (setq ccls-executable "/home/jopa/Projekty/ccls/Release/ccls"))
 #+END_SRC 
 
 * Python development
