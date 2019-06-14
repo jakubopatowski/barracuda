@@ -1,4 +1,4 @@
-n
+
 
   Author: Jakub Opatowski
   mailto: [[jakub.opatowski@gmail.com]]
@@ -62,49 +62,32 @@ lisp evaluator know about things like function and symbol declarations.
 
 * Theme
 
+[[https://github.com/hlissner/emacs-doom-themes][doom-theme homepage]]
+[[https://github.com/seagle0128/doom-modeline][doom-modeline homepage]]
+
 #+BEGIN_SRC emacs-lisp
-  ;; (use-package color-theme-sanityinc-solarized
-  ;;   :ensure t
-  ;;   :config
-  ;;   (load-theme 'sanityinc-solarized-dark t))
-#+END_SRC
+    (use-package doom-themes
+      :ensure t
+      :init
+      (setq doom-themes-enable-bold t    ; if nil, bold is universally disabled
+            doom-themes-enable-italic t) ; if nil, italics is universally disabled
+      (load-theme 'doom-solarized-light t)
+      (doom-themes-visual-bell-config)
+      (doom-themes-neotree-config)
+      ;;(doom-themes-treemacs-config)
+      (doom-themes-org-config))
 
-[[https://github.com/hlissner/emacs-doom-themes][doom-theme homepage] ]
-#+BEGIN_SRC emacs-lisp
-  (use-package doom-themes
-    :ensure t
-    :init
-    (setq doom-themes-enable-bold t    ; if nil, bold is universally disabled
-          doom-themes-enable-italic t) ; if nil, italics is universally disabled
-    (load-theme 'doom-one t)
-    (doom-themes-visual-bell-config)
-    (doom-themes-neotree-config)
-    ;;(doom-themes-treemacs-config)
-    (doom-themes-org-config))
+    (use-package doom-modeline
+      :ensure t
+      :hook (after-init . doom-modeline-mode)
+      :config
+      (setq doom-modeline-icon t)
+      (setq doom-modeline-major-mode-icon t)
+      (setq doom-modeline-major-mode-color-icon t)
+      (setq doom-modeline-buffer-state-icon t)
+      (setq doom-modeline-buffer-modification-icon t)
+      (setq doom-modeline-minor-modes t))
 
-  ;;https://github.com/hlissner/emacs-solaire-mode
-  ;;(use-package solaire-mode
-  ;;  :ensure t)
-
-  ;; brighten buffers (that represent real files)
-  ;;(add-hook 'change-major-mode-hook #'turn-on-solaire-mode)
-  ;; To enable solaire-mode unconditionally for certain modes:
-  ;;(add-hook 'ediff-prepare-buffer-hook #'solaire-mode)
-
-  ;; ...if you use auto-revert-mode, this prevents solaire-mode from turning
-  ;; itself off every time Emacs reverts the file
-  ;;(add-hook 'after-revert-hook #'turn-on-solaire-mode)
-
-  ;; highlight the minibuffer when it is activated:
-  ;;(add-hook 'minibuffer-setup-hook #'solaire-mode-in-minibuffer)
-
-
-  ;; if the bright and dark background colors are the wrong way around, use this
-  ;; to switch the backgrounds of the `default` and `solaire-default-face` faces.
-  ;; This should be used *after* you load the active theme!
-  ;;
-  ;; NOTE: This is necessary for themes in the doom-themes package!
-  ;;(solaire-mode-swap-bg)
 
 #+END_SRC
 
@@ -228,42 +211,43 @@ Based on [[https://microsoft.github.io/language-server-protocol/][language serve
 [[https://sarcasm.github.io/notes/dev/compilation-database.html][compilation database manual]]
 
 #+BEGIN_SRC emacs-lisp
-  ;;use only spaces in indentation
-  (progn
-    (setq-default indent-tabs-mode nil))
+    ;;use only spaces in indentation
+    (progn
+      (setq-default indent-tabs-mode nil))
 
-  (setq c-default-style "k&r"
-        c-basic-offset 4)
+    (setq c-default-style "k&r"
+          c-basic-offset 4)
 
-  (use-package company
-    :ensure t
-    :config
-    (add-hook 'after-init-hook 'global-company-mode)
-    (setq company-ide-delay 0)
-    (setq company-minimum-prefix-length 1)
-    (define-key company-active-map (kbd "M-n") nil)
-    (define-key company-active-map (kbd "M-p") nil)
-    (define-key company-active-map (kbd "C-n") #'company-select-next)
-    (define-key company-active-map (kbd "C-p") #'company-select-previous))
+    (use-package company
+      :ensure t
+      :config
+      (add-hook 'after-init-hook 'global-company-mode)
+      (setq company-ide-delay 0)
+      (setq company-minimum-prefix-length 1)
+      (define-key company-active-map (kbd "M-n") nil)
+      (define-key company-active-map (kbd "M-p") nil)
+      (define-key company-active-map (kbd "C-n") #'company-select-next)
+      (define-key company-active-map (kbd "C-p") #'company-select-previous))
 
-  (use-package lsp-mode
-    :ensure t
-    :commands lsp)
+    (use-package lsp-mode
+      :ensure t
+      :commands lsp)
 
-  (use-package lsp-ui
-    :ensure t
-    :commands lsp-ui-mode)
+    (use-package lsp-ui
+      :ensure t
+      :commands lsp-ui-mode)
 
-  (use-package company-lsp
-    :ensure t
-    :commands company-lsp)
+    (use-package company-lsp
+      :ensure t
+      :commands company-lsp)
 
-  (use-package ccls
-    :hook
-    ((c-mode c++-mode objc-mode) .
-     (lambda () (require 'ccls) (lsp)))
-    :config
-    (setq ccls-executable "/home/jopa/Projekty/ccls/Release/ccls"))
+    (use-package ccls
+      :ensure t
+      :hook
+      ((c-mode c++-mode objc-mode) .
+       (lambda () (require 'ccls) (lsp)))
+      :config
+      (setq ccls-executable "/home/jopa/Projekty/ccls/Release/ccls"))
 #+END_SRC 
 
 * Python development

@@ -34,6 +34,7 @@
 # Directories
 build
 .ccls-cache
+.cquery_cached_index
 
 # Files
 ProgramConfig.h
