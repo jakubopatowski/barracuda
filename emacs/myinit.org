@@ -21,11 +21,18 @@ the :init keyword executes the code before the package is loaded;
 and the :preface keyword is there so the Emacs byte compiler and the 
 lisp evaluator know about things like function and symbol declarations.
 
+* Environment variables
+
+#+BEGIN_SRC emacs-lisp
+
+#+END_SRC
+
 * Small tweaks
 
 #+BEGIN_SRC emacs-lisp
   (setq ingibit-startup-message t)
   (tool-bar-mode -1)
+  (scroll-bar-mode -1)
   (show-paren-mode 1)
   ;;(electric-pair-mode 1)
   (defalias 'list-buffers 'ibuffer-other-window)
@@ -58,6 +65,11 @@ lisp evaluator know about things like function and symbol declarations.
     :ensure t
     :bind (("M-p" . move-text-up)
            ("M-n" . move-text-down)))
+
+  (use-package which-key
+    :ensure t
+    :config
+    (which-key-mode))
 #+END_SRC
 
 * Theme
@@ -66,29 +78,28 @@ lisp evaluator know about things like function and symbol declarations.
 [[https://github.com/seagle0128/doom-modeline][doom-modeline homepage]]
 
 #+BEGIN_SRC emacs-lisp
-    (use-package doom-themes
-      :ensure t
-      :init
-      (setq doom-themes-enable-bold t    ; if nil, bold is universally disabled
-            doom-themes-enable-italic t) ; if nil, italics is universally disabled
-      (load-theme 'doom-solarized-light t)
-      (doom-themes-visual-bell-config)
-      (doom-themes-neotree-config)
-      ;;(doom-themes-treemacs-config)
-      (doom-themes-org-config))
+  (use-package doom-themes
+    :ensure t
+    :init
+    (setq doom-themes-enable-bold t    ; if nil, bold is universally disabled
+          doom-themes-enable-italic t) ; if nil, italics is universally disabled
+    (load-theme 'doom-solarized-light t)
+    (doom-themes-visual-bell-config)
+    (doom-themes-neotree-config)
+    ;;(doom-themes-treemacs-config)
+    (doom-themes-org-config))
 
-    (use-package doom-modeline
-      :ensure t
-      :hook (after-init . doom-modeline-mode)
-      :config
-      (setq doom-modeline-icon t)
-      (setq doom-modeline-major-mode-icon t)
-      (setq doom-modeline-major-mode-color-icon t)
-      (setq doom-modeline-buffer-state-icon t)
-      (setq doom-modeline-buffer-modification-icon t)
-      (setq doom-modeline-minor-modes t))
-
-
+  (use-package doom-modeline
+    :ensure t
+    :hook (after-init . doom-modeline-mode)
+    :config
+    (setq doom-modeline-buffer-file-name-style 'relative-to-project)
+    (setq doom-modeline-icon t)
+    (setq doom-modeline-major-mode-icon t)
+    (setq doom-modeline-major-mode-color-icon t)
+    (setq doom-modeline-buffer-state-icon t)
+    (setq doom-modeline-buffer-modification-icon t)
+    (setq doom-modeline-minor-modes nil))
 #+END_SRC
 
 * Neotree
@@ -209,51 +220,68 @@ Based on [[https://microsoft.github.io/language-server-protocol/][language serve
 [[https://github.com/emacs-lsp/lsp-mode][lsp-mode homepage]]
 [[https://github.com/emacs-lsp/lsp-ui][lsp-ui homepage]]
 [[https://github.com/MaskRay/ccls][ccls homepage]]
+[[https://clang.llvm.org/docs/ClangFormatStyleOptions.html][Clang style options manual]]
 
 #+BEGIN_SRC emacs-lisp
-  ;;use only spaces in indentation
-  (progn
-    (setq-default indent-tabs-mode nil))
+    ;;use only spaces in indentation
+    (progn
+      (setq-default indent-tabs-mode nil))
 
-  (setq c-default-style "k&r"
-        c-basic-offset 4)
+    (setq c-default-style "k&r"
+          c-basic-offset 4)
 
-  (use-package cmake-font-lock
-    :ensure t
-    :config
-    (autoload 'cmake-font-lock-activate "cmake-font-lock" nil t)
-    (add-hook 'cmake-mode-hook 'cmake-font-lock-activate))
+    (use-package cmake-font-lock
+      :ensure t
+      :config
+      (autoload 'cmake-font-lock-activate "cmake-font-lock" nil t)
+      (add-hook 'cmake-mode-hook 'cmake-font-lock-activate))
 
-  (use-package company
-    :ensure t
-    :config
-    (add-hook 'after-init-hook 'global-company-mode)
-    (setq company-ide-delay 0)
-    (setq company-minimum-prefix-length 1)
-    (define-key company-active-map (kbd "M-n") nil)
-    (define-key company-active-map (kbd "M-p") nil)
-    (define-key company-active-map (kbd "C-n") #'company-select-next)
-    (define-key company-active-map (kbd "C-p") #'company-select-previous))
+    (use-package company
+      :ensure t
+      :config
+      (add-hook 'after-init-hook 'global-company-mode)
+      (setq company-ide-delay 0)
+      (setq company-minimum-prefix-length 1)
+      (define-key company-active-map (kbd "M-n") nil)
+      (define-key company-active-map (kbd "M-p") nil)
+      (define-key company-active-map (kbd "C-n") #'company-select-next)
+      (define-key company-active-map (kbd "C-p") #'company-select-previous))
 
-  (use-package lsp-mode
-    :ensure t
-    :commands lsp)
+    (use-package lsp-mode
+      :ensure t
+      :commands lsp
+      :config
+      (setq lsp-prefer-flymake nil)
+      (setq-default flycheck-disabled-checkers '(c/c++-cppcheck c/c++-gcc)))
 
-  (use-package lsp-ui
-    :ensure t
-    :commands lsp-ui-mode)
+    (use-package lsp-ui
+      :ensure t
+      :commands lsp-ui-mode
+      :config
+      (add-hook 'lsp-mode-hook 'lsp-ui-mode)
+      (add-hook 'c++-mode-hook 'flycheck-mode)
+      (define-key lsp-ui-mode-map [remap xref-find-definitions] #'lsp-ui-peek-find-definitions)
+      (define-key lsp-ui-mode-map [remap xref-find-references] #'lsp-ui-peek-find-references))
 
-  (use-package company-lsp
-    :ensure t
-    :commands company-lsp)
+    (use-package company-lsp
+      :ensure t
+      :commands company-lsp
+      :config
+      (push 'company-lsp company-backends))
 
-  (use-package ccls
-    :ensure t
-    :hook
-    ((c-mode c++-mode objc-mode) .
-     (lambda () (require 'ccls) (lsp)))
-    :config
-    (setq ccls-executable "/home/jopa/Projekty/ccls/Release/ccls"))
+    (use-package ccls
+      :ensure t
+      :hook
+      ((c-mode c++-mode objc-mode) .
+       (lambda () (require 'ccls) (lsp)))
+      :config
+      (setq ccls-executable "c:/Program Files (x86)/ccls/bin/ccls.exe"))
+
+    (use-package clang-format
+      :ensure t
+      :config
+      (global-set-key (kbd "C-c u") 'clang-format-buffer)
+      (global-set-key (kbd "C-c i") 'clang-format-region))
 #+END_SRC 
 
 * Python development
