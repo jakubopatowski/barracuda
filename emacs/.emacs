@@ -19,21 +19,19 @@ There are two things you can do about this warning:
   (add-to-list 'package-archives
                (cons "melpa" (concat proto "://melpa.org/packages/")) t)
   ;;(add-to-list 'package-archives
-  ;;(cons "melpa-stable" (concat proto "://stable.melpa.org/packages/")) t)
+  ;;             (cons "melpa-stable" (concat proto "://stable.melpa.org/packages/")) t)
   (when (< emacs-major-version 24)
     ;; For important compatibility libraries like cl-lib
     (add-to-list 'package-archives (cons "gnu" (concat proto "://elpa.gnu.org/packages/")))))
-;;(package-initialize)
-;;(package-refresh-contents)
+(package-initialize)
 
 (unless (package-installed-p 'use-package)
   (package-refresh-contents)
-  (package-initialize)
   (package-install 'use-package))
 
 (org-babel-load-file (expand-file-name "~/myinit.org"))
 
-
+;;=========================================================================================================
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
