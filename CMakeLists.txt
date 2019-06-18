@@ -97,7 +97,7 @@ ADD_EXECUTABLE(${PROJECT_NAME}
 
 TARGET_LINK_LIBRARIES(${PROJECT_NAME}
   PUBLIC
-  ${Boost_LIBRATIES}
+  ${Boost_LIBRARIES}
   Qt5::Core
   Qt5::Gui
   Qt5::Widgets)
@@ -108,10 +108,4 @@ if(MSVS)
     COMMAND ${CMAKE_COMMAND} -E copy_if_different $<TARGET_FILE:Qt5::Core> $<TARGET_FILE_DIR:${PROJECT_NAME}>
     COMMAND ${CMAKE_COMMAND} -E copy_if_different $<TARGET_FILE:Qt5::Gui> $<TARGET_FILE_DIR:${PROJECT_NAME}>
     COMMAND ${CMAKE_COMMAND} -E copy_if_different $<TARGET_FILE:Qt5::Widgets> $<TARGET_FILE_DIR:${PROJECT_NAME}> )
-  
-  add_custom_target(setupMSVS2015x64BuildEnv
-    COMMAND c:/WINDOWS/system32/cmd.exe ARGS /k "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" x86_amd64)
-    #COMMAND "C:\WINDOWS\system32\cmd.exe /k \"\"C:\\Program Files (x86)\\Microsoft Visual Studio 14.0\\VC\\vcvarsall.bat\"\" x86_amd64")
-
-  add_dependencies(setupMSVS2015x64BuildEnv ${PROJECT_NAME})
 endif()

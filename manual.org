@@ -1,0 +1,43 @@
+* Cmake
+** videos
+   [[https://www.youtube.com/watch?v=ztrnb-bVVPo][Modern CMake for modular design]]
+   30:00 start of some code examplesr
+** blogs
+   [[https://mropert.github.io/][Mathieu Ropert blog]] A blog about C++ with a bit of a French touch
+   notes: some interesting stuff about cmake builds regarding modular design
+** code examples
+*** minimum CMakeLists.txt
+
+cmake_minimum_required(VERSION 3.0)
+
+if(MSVC)
+    add_compile_options(/W3 /WX)
+else()
+    add_compile_options(-W -Wall -Werror)
+endif()
+
+add_livrary(mylib
+    src/file1.cpp
+    src/file2.cpp
+    ...)
+
+target_include_directories(mylib PUBLIC include)
+target_include_directories(mylib PRIVATE src)
+
+if(SOME_SETTING)
+    target_compile_definitions(mylib
+        PUBLIC WITH_SOME_SETTING)
+endif()
+
+# Public (interface) dependencies
+target_link_libraries(mylib PUBLIC abc)
+
+# Private (implemantation) dependencies
+target_link_libraries(mylib PRIVATE xyz)
+
+# For header only libraries
+add_livrary(mylib INTERFACE)
+
+target_include_directories(mylib INTERFACE include)
+
+target_link_libraries(mylib INTERFACE Boost::Boost)

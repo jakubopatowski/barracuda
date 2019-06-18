@@ -27,6 +27,7 @@
     <property name="title">
      <string>Plik</string>
     </property>
+    <addaction name="separator"/>
     <addaction name="actionZamknij"/>
    </widget>
    <addaction name="menuPlik"/>
@@ -39,5 +40,22 @@
   </action>
  </widget>
  <resources/>
- <connections/>
+ <connections>
+  <connection>
+   <sender>actionZamknij</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>close()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>319</x>
+     <y>239</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
 </ui>
