@@ -41,7 +41,7 @@ There are two things you can do about this warning:
  '(package-selected-packages
    (quote
     (flycheck-rtags company-irony-c-headers company-rtags move-text neotree immaterial-theme multi-term cmake-mode levenshtein rtags cmake-ide company-irony flycheck-irony irony flycheck borg color-theme-sanityinc-solarized use-package try solaire-mode org-bullets doom-themes counsel auto-complete ace-window)))
- '(python-shell-interpreter "python3")
+ '(python-shell-interpreter "python")
  '(show-paren-mode t)
  '(tool-bar-mode nil))
 (custom-set-faces

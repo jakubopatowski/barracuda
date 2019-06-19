@@ -81,23 +81,57 @@ lisp evaluator know about things like function and symbol declarations.
     :init
     (setq doom-themes-enable-bold t    ; if nil, bold is universally disabled
           doom-themes-enable-italic t) ; if nil, italics is universally disabled
-    (load-theme 'doom-solarized-light t)
+    ;; ..:: THEMES ::..
+    ;;(load-theme 'doom-nova t)
+    ;;(load-theme 'doom-one t)
+    ;;(load-theme 'doom-one-light t)
+    ;;(load-theme 'doom-vibrant t)
+    ;;(load-theme 'doom-city-lights t)
+    ;;(load-theme 'doom-dracula t)
+    ;;(load-theme 'doom-Iosvkem t)
+    ;;(load-theme 'doom-molokai t)
+    ;;(load-theme 'doom-nord t)
+    ;;(load-theme 'doom-nord-light t)
+    ;;(load-theme 'doom-opera t)
+    ;;(load-theme 'doom-opera-light t)
+    ;;(load-theme 'doom-nova t)
+    (load-theme 'doom-peacock t)
+    ;;(load-theme 'doom-solarized-light t)
+    ;;(load-theme 'doom-sourcerer t)
+    ;;(load-theme 'doom-spacegrey t)
+    ;;(load-theme 'doom-tomorrow-night t)
+    ;;(load-theme 'doom-mono-dark t)
+    ;;(load-theme 'doom-mono-light t)
+    ;;(load-theme 'doom-tron t)
+    ;;===============================
     (doom-themes-visual-bell-config)
     (doom-themes-neotree-config)
-    ;;(doom-themes-treemacs-config)
+    (doom-themes-treemacs-config)
     (doom-themes-org-config))
 
-  (use-package doom-modeline
-    :ensure t
-    :hook (after-init . doom-modeline-mode)
-    :config
-    (setq doom-modeline-buffer-file-name-style 'relative-to-project)
-    (setq doom-modeline-icon t)
-    (setq doom-modeline-major-mode-icon t)
-    (setq doom-modeline-major-mode-color-icon t)
-    (setq doom-modeline-buffer-state-icon t)
-    (setq doom-modeline-buffer-modification-icon t)
-    (setq doom-modeline-minor-modes nil))
+  ;;(use-package spaceline
+  ;;  :ensure t
+  ;;  :config
+  ;;  (spaceline-emacs-theme))
+  ;;
+  ;;(use-package spaceline-all-the-icons
+  ;;  :ensure t
+  ;;  :after spackeline
+  ;;  :config
+  ;;  (spaceline-all-the-icons-theme))
+  ;;
+  
+   (use-package doom-modeline
+     :ensure t
+     :hook (after-init . doom-modeline-mode)
+     :config
+     (setq doom-modeline-buffer-file-name-style 'relative-to-project)
+     (setq doom-modeline-icon t)
+     (setq doom-modeline-major-mode-icon t)
+     (setq doom-modeline-major-mode-color-icon t)
+     (setq doom-modeline-buffer-state-icon t)
+     (setq doom-modeline-buffer-modification-icon t)
+     (setq doom-modeline-minor-modes nil))
 #+END_SRC
 
 * Neotree
