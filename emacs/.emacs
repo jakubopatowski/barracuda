@@ -29,7 +29,7 @@ There are two things you can do about this warning:
   (package-refresh-contents)
   (package-install 'use-package))
 
-(org-babel-load-file (expand-file-name "~/myinit.org"))
+(org-babel-load-file (expand-file-name "~/Projekty/barracuda/emacs/myinit.org"))
 
 ;;=========================================================================================================
 (custom-set-variables
