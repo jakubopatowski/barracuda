@@ -2,9 +2,11 @@
 ** videos
    [[https://www.youtube.com/watch?v=ztrnb-bVVPo][Modern CMake for modular design]]
    30:00 start of some code examplesr
+
 ** blogs
    [[https://mropert.github.io/][Mathieu Ropert blog]] A blog about C++ with a bit of a French touch
    notes: some interesting stuff about cmake builds regarding modular design
+
 ** code examples
 *** minimum CMakeLists.txt
 

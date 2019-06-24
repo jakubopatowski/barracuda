@@ -1,6 +1,4 @@
 
-
-
   Author: Jakub Opatowski
   mailto: [[jakub.opatowski@gmail.com]]
 
@@ -260,13 +258,17 @@ Based on [[https://microsoft.github.io/language-server-protocol/][language serve
     (setq-default indent-tabs-mode nil))
 
   (setq c-default-style "k&r"
-	c-basic-offset 4)
+        c-basic-offset 4)
 
-  ;; (use-package cmake-font-lock
-  ;;   :ensure t
-  ;;   :config
-  ;;   (autoload 'cmake-font-lock-activate "cmake-font-lock" nil t)
-  ;;   (add-hook 'cmake-mode-hook 'cmake-font-lock-activate))
+  (use-package srefactor
+    :ensure t
+    :config
+    (semantic-mode 1)
+    (define-key c-mode-map (kbd "M-RET") 'srefactor-refactor-at-point)
+    (define-key c++-mode-map (kbd "M-RET") 'srefactor-refactor-at-point))
+
+  (use-package cmake-mode
+    :ensure t)
 
   (use-package company
     :ensure t
@@ -290,8 +292,8 @@ Based on [[https://microsoft.github.io/language-server-protocol/][language serve
     (setq-default flycheck-disabled-checkers '(c/c++-cppcheck c/c++-gcc))
     (lsp-register-client
      (make-lsp-client :new-connection (lsp-stdio-connection "pyls")
-		      :major-modes '(python-mode)
-		      :server-id 'pyls)))
+                      :major-modes '(python-mode)
+                      :server-id 'pyls)))
 
   (use-package lsp-ui
     :ensure t
@@ -317,9 +319,9 @@ Based on [[https://microsoft.github.io/language-server-protocol/][language serve
      (lambda () (require 'ccls) (lsp)))
     :config
     (if (eq system-type 'gnu/linux)
-	(setq ccls-executable "~/Projekty/ccls/Release/ccls"))
+        (setq ccls-executable "~/Projekty/ccls/Release/ccls"))
     (if (eq system-type 'windows-nt)
-	(setq ccls-executable "c:/Program Files (x86)/ccls/bin/ccls.exe")))
+        (setq ccls-executable "c:/Program Files (x86)/ccls/bin/ccls.exe")))
 
   (use-package clang-format
     :ensure t

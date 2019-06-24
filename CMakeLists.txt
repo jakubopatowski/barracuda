@@ -1,84 +1,84 @@
-CMAKE_MINIMUM_REQUIRED(VERSION 3.14)
-PROJECT(Barracuda)
+cmake_minimum_required(VERSION 3.1...3.15)
 
-SET (PROGRAM_VERSION_MAJOR 0)
-SET (PROGRAM_VERSION_MINOR 1)
-SET (PROGRAM_VERSION_PATCH 0)
+if(${CMAKE_VERSION} VERSION_LESS 3.12)
+    cmake_policy(VERSION ${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION})
+endif()
 
-CONFIGURE_FILE (
+project(Barracuda)
+
+set (PROGRAM_VERSION_MAJOR 0)
+set (PROGRAM_VERSION_MINOR 1)
+set (PROGRAM_VERSION_PATCH 0)
+
+configure_file (
   "${PROJECT_SOURCE_DIR}/ProgramConfig.h.in"
   "${PROJECT_SOURCE_DIR}/ProgramConfig.h")
 
 # Setup flags for compilers
-IF(UNIX)
-  MESSAGE(status "Setting GCC flags")
-  SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fexceptions -g -Wall")
-ELSEIF(MSVC)
-  MESSAGE(status "Setting MSVC flags")
-  SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /EHc")
-ENDIF()
-SET(CMAKE_EXPORT_COMPILE_COMMANDS ON)
-MESSAGE(status "** CMAKE_CXX_FLAGS: ${CMAKE_CXX_FLAGS}")
-
-# set project includes
-INCLUDE_DIRECTORIES("${PROJECT_SOURCE_DIR}")
+if(UNIX)
+  message(status "Setting GCC flags")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fexceptions -g -Wall")
+elseif(MSVC)
+  message(status "Setting MSVC flags")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /EHc")
+endif()
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+message(status "** CMAKE_CXX_FLAGS: ${CMAKE_CXX_FLAGS}")
 
 #=====================
 #..:: BOOST SETUP ::..
 #=====================
 
 # set boost includes
-SET(Boost_USE_STATIC_LIBS      OFF)  # only find static libs
-SET(Boost_USE_DEBUG_LIBS       ON)   # ignore debug libs and
-SET(Boost_USE_RELEASE_LIBS     OFF)  # only find release libs
-SET(Boost_USE_MULTITHREADED    ON)
-SET(Boost_USE_STATIC_RUNTIME   OFF)
-IF(UNIX)
-  SET(BOOST_LIBRARYDIR         "/usr/lib64")
-ELSEIF(MSVC)
-  SET(BOOST_ROOT               "c:/Jopa/HOME/Projekty/boost/boost_1_69_0")
-ENDIF()
+set(Boost_USE_STATIC_LIBS      OFF)  # only find static libs
+set(Boost_USE_DEBUG_LIBS       ON)   # ignore debug libs and
+set(Boost_USE_RELEASE_LIBS     OFF)  # only find release libs
+set(Boost_USE_MULTITHREADED    ON)
+set(Boost_USE_STATIC_RUNTIME   OFF)
+if(UNIX)
+  set(BOOST_LIBRARYDIR         "/usr/lib64")
+elseif(MSVC)
+  set(BOOST_ROOT               "c:/Jopa/HOME/Projekty/boost/boost_1_69_0")
+endif()
 
-FIND_PACKAGE(Boost REQUIRED COMPONENTS date_time)
-INCLUDE_DIRECTORIES("${Boost_INCLUDE_DIRS}")
+find_package(Boost REQUIRED COMPONENTS date_time)
 
-MESSAGE("==============================================================")
-MESSAGE("                        ..:: BOOST ::..                       ")
-MESSAGE("==============================================================")
-MESSAGE("Boost_FOUND:                ${Boost_FOUND}")
-MESSAGE("Boost_VERSION:              ${Boost_VERSION}")
-MESSAGE("BOOST_ROOT:                 ${BOOST_ROOT}")
-MESSAGE("Boost_INCLUDE_DIRS:         ${Boost_INCLUDE_DIRS}")
-MESSAGE("Boost_LIBRARY_DIRS:         ${Boost_LIBRARY_DIRS}")
-MESSAGE("Boost_LIBRARIES:            ${Boost_LIBRARIES}")
-MESSAGE("==============================================================")
+message("==============================================================")
+message("                        ..:: BOOST ::..                       ")
+message("==============================================================")
+message("Boost_FOUND:                ${Boost_FOUND}")
+message("Boost_VERSION:              ${Boost_VERSION}")
+message("BOOST_ROOT:                 ${BOOST_ROOT}")
+message("Boost_INCLUDE_DIRS:         ${Boost_INCLUDE_DIRS}")
+message("Boost_LIBRARY_DIRS:         ${Boost_LIBRARY_DIRS}")
+message("Boost_LIBRARIES:            ${Boost_LIBRARIES}")
+message("==============================================================")
 
 #=====================
 # ..:: QT5 SETUP ::..
 #=====================
 
-FIND_PACKAGE(Qt5 COMPONENTS REQUIRED Core Gui Widgets)
-INCLUDE_DIRECTORIES("${Qt5Widgets_INCLUDE_DIRS}")
+find_package(Qt5 COMPONENTS REQUIRED Core Gui Widgets)
 
-MESSAGE("==============================================================")
-MESSAGE("                   ..:: Qt5 Widgets::..                       ")
-MESSAGE("==============================================================")
-MESSAGE("Qt5Widgets_FOUND:           ${Qt5Widgets_FOUND}")
-MESSAGE("Qt5Widgets_VERSION:         ${Qt5Widgets_VERSION}")
-MESSAGE("Qt5Widgets_INCLUDE_DIRS:    ${Qt5Widgets_INCLUDE_DIRS}")
-MESSAGE("Qt5Widgets_LIBRARIES:       ${Qt5Widgets_LIBRARIES}")
-MESSAGE("==============================================================")
+message("==============================================================")
+message("                   ..:: Qt5 Widgets::..                       ")
+message("==============================================================")
+message("Qt5Widgets_FOUND:           ${Qt5Widgets_FOUND}")
+message("Qt5Widgets_VERSION:         ${Qt5Widgets_VERSION}")
+message("Qt5Widgets_INCLUDE_DIRS:    ${Qt5Widgets_INCLUDE_DIRS}")
+message("Qt5Widgets_LIBRARIES:       ${Qt5Widgets_LIBRARIES}")
+message("==============================================================")
 
-SET(CMAKE_INCLUDE_CURRENT_DIR ON)
+set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-SET(project_sources
+set(project_sources
   mainwindow.cpp
   main.cpp)
 
-SET(project_headers
+set(project_headers
   mainwindow.h)
 
-SET(project_ui
+set(project_ui
   mainwindow.ui)
 
 # wrap the ui file to a c++ header
@@ -89,18 +89,24 @@ qt5_wrap_cpp(moc_sources ${project_headers})
 # ..:: Visual Studio Setup ::..
 #=====================
 
-ADD_EXECUTABLE(${PROJECT_NAME}
+add_executable(${PROJECT_NAME}
   ${project_sources}
   ${project_headers}
   ${ui_wrap}
   ${moc_sources})
 
-TARGET_LINK_LIBRARIES(${PROJECT_NAME}
-  PUBLIC
+target_link_libraries(${PROJECT_NAME}
+  PRIVATE
   ${Boost_LIBRARIES}
   Qt5::Core
   Qt5::Gui
   Qt5::Widgets)
+
+target_include_directories(${PROJECT_NAME}
+  PRIVATE
+  ${PROJECT_SOURCE_DIR}
+  ${Boost_INCLUDE_DIRS}
+  ${Qt5Widgets_INCLUDE_DIRS})
 
 # auto copy dlls if on windows
 if(MSVS)
