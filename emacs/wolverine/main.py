@@ -1,51 +1,59 @@
-import mmap
 import re
 import os
 
-target_pattern = b'TARGET\\s*=\\s*(\\w*)'
-defines_pattern = b'DEFINES\\s*=\\s*(.*)'
-define_pattern = b'-D(\\S*)'
-cxx_flags_pattern = b'CXXFLAGS\\s*=\\s(.*)'
-cxx_flag_pattern = b'(?:^|\\s)([^\\$\\s]\\S*[^\\$\\s])'
-includes_pattern = b'INCPATH\\s*=\\s(.*)'
-include_pattern = b'\\"(\\S*)\\"'
 
-projects = os.listdir('c:/Projekty/trunk/src')
-makefile_name = 'makefile'
-cmakelists_name = 'CMakeLists.txt'
-for project in projects:
-    project_path = os.path.join('c:\\', 'Projekty', 'trunk', 'src', project)
-    makefile_path = os.path.join('c:\\', 'Projekty', 'trunk',
-                                 'win32-msvc2015_d', project, 'qt4')
-    makefile_file = os.path.join(makefile_path, makefile_name)
+class MakefileParser:
 
-    if not os.path.isfile(makefile_file):
-        continue
+    target_pattern = 'TARGET\\s*=\\s*(\\w*)'
+    defines_pattern = 'DEFINES\\s*=\\s*(.*)'
+    define_pattern = '-D(\\S*)'
+    cxx_flags_pattern = 'CXXFLAGS\\s*=\\s(.*)'
+    cxx_flag_pattern = '(?:^|\\s)([^\\$\\s]\\S*[^\\$\\s])'
+    includes_pattern = 'INCPATH\\s*=\\s(.*)'
+    include_pattern = '\\"(\\S*)\\"'
+    target_type_pattern = '\\#\\s*Template:\\s*([\\w]*)'
 
-    print('==============================')
-    print(project)
-    print(project_path)
-    print(makefile_path)
-    print(makefile_file)
+    def __init__(self, makefile_path):
+        self.makefile_path = makefile_path
 
-    with open(makefile_file, 'r') as makefile, \
-            mmap.mmap(makefile.fileno(), 0, access=mmap.ACCESS_READ) as stream:
+    def parse_file(self):
+        if os.path.isfile(self.makefile_path):
+            with open(self.makefile_path) as makefile:
+                makefile_data = makefile.read()
 
-        # targets
-        list_of_targets = re.findall(target_pattern, stream)
-        # defines
-        defines = re.findall(defines_pattern, stream)
-        list_of_defines = re.findall(define_pattern, defines[0])
-        # cxx flags
-        cxx_flags = re.findall(cxx_flags_pattern, stream)
-        list_of_cxx_flags = re.findall(cxx_flag_pattern, cxx_flags[0])
-        # includes
-        includes = re.findall(includes_pattern, stream)
-        list_of_includes = re.findall(include_pattern, includes[0])
+            # targets
+            list_of_targets = re.findall(self.target_pattern, makefile_data)
 
-        print(list_of_targets)
-        print(list_of_defines)
-        print(list_of_cxx_flags)
-        print(list_of_includes)
+            # defines
+            defines = re.findall(self.defines_pattern, makefile_data)
+            list_of_defines = re.findall(self.define_pattern, defines[0])
 
-        makefile.close()
+            # cxx flags
+            cxx_flags = re.findall(self.cxx_flags_pattern, makefile_data)
+            list_of_cxx_flags = re.findall(self.cxx_flag_pattern, cxx_flags[0])
+
+            # includes
+            includes = re.findall(self.includes_pattern, makefile_data)
+            list_of_includes = re.findall(self.include_pattern, includes[0])
+
+            # target type
+            target_type = re.findall(self.target_type_pattern, makefile_data)
+
+            print(list_of_targets)
+            print(list_of_defines)
+            print(list_of_cxx_flags)
+            print(list_of_includes)
+            print(target_type)
+
+    def make_cmake(self, path_to_cmake):
+        cmake = open(path_to_cmake, 'w')
+        cmake.write()
+
+
+project = 'radosc'
+makefile_path = os.path.join('c:\\', 'Projekty', 'trunk',
+                             'win32-msvc2015_d', project,
+                             'qt4', 'makefile')
+
+makefile_parser = MakefileParser(makefile_path)
+makefile_parser.parse_file()
