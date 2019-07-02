@@ -106,7 +106,7 @@ lisp evaluator know about things like function and symbol declarations.
   (setq column-number-mode t)
   ;; C-c C-d will duplicate current line
   (global-set-key "\C-c\C-d" "\C-a\C- \C-n\M-w\C-y")
-#+END_SRC
+ #+END_SRC
 
 * Small packages
 

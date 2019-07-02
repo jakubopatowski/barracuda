@@ -17,13 +17,16 @@ class MakefileParser:
     sources_pattern = 'SOURCES\\s*=\\s*(.*)'
     # source_pattern =
 
-    def __init__(self, makefile_path):
+    def __init__(self, makefile_path, project_path):
         self.makefile_path = makefile_path
+        self.project_path = project_path
 
     def parse_file(self):
         if os.path.isfile(self.makefile_path):
             with open(self.makefile_path) as makefile:
                 makefile_data = makefile.read()
+
+            makefile_dir = os.path.dirname(self.makefile_path)
 
             # delete line continuations
             makefile_data = re.sub(self.line_continue_pattern, '',
@@ -63,11 +66,18 @@ class MakefileParser:
 
             # sources
             sources = re.findall(self.sources_pattern, makefile_data)
-            self.list_of_sources = sources[0].split()
-            print('sources:', self.list_of_sources)
+            self.list_of_sources = []
+            for source in sources[0].split():
+                full_path = os.path.normpath(os.path.join(makefile_dir,
+                                                          source))
+                full_path = os.path.relpath(full_path, self.project_path)
+                self.list_of_sources.append(full_path)
 
-    def make_cmake(self, path_to_cmake):
-        cmake = open(path_to_cmake, 'w')
+            print('list_of_sources', self.list_of_sources)
+
+    def make_cmake(self):
+        cmake_path = os.path.join(self.project_path, 'CMakeLists.txt')
+        cmake = open(cmake_path, 'w')
         cmake.write('cmake_minimum_required(VERSION 3.1...3.15)\n')
         cmake.write('\n')
         cmake.write('if(${CMAKE_VERSION} VERSION_LESS 3.12)\n')
@@ -77,26 +87,25 @@ class MakefileParser:
         cmake.write('\n')
         cmake.write('if(MSVC)\n')
         cmake.write('    message(status \"Setting MSVC flags\")\n')
-        cmake.write('    set(CMAKE_CXX_FLAGS\n')
+        cmake.write('    set(CMAKE_CXX_FLAGS')
         for cxx_flag in self.list_of_cxx_flags:
-            cmake.write('        ')
+            cmake.write(' ')
             cmake.write(cxx_flag)
-            cmake.write('\n')
         for define in self.list_of_defines:
-            cmake.write('        -D')
+            cmake.write(' ')
+            cmake.write('-D')
             cmake.write(define)
-            cmake.write('\n')
 
-        cmake.write('    )\n')
+        cmake.write(')\n')
         cmake.write('endif()\n')
         cmake.write('set(CMAKE_EXPORT_COMPILE_COMMANDS ON)\n')
         cmake.write('message(status "** CMAKE_CXX_FLAGS: ')
         cmake.write('${CMAKE_CXX_FLAGS}")\n')
         cmake.write('set(project_sources\n')
         for source in self.list_of_sources:
-            cmake.write('    ')
-            cmake.write(source)
-            cmake.write('\n')
+            cmake.write('    \"')
+            cmake.write(source.replace('\\', '/'))
+            cmake.write('\"\n')
 
         cmake.write(')\n')
         if self.target_type[0] == 'lib':
@@ -104,17 +113,20 @@ class MakefileParser:
             cmake.write('    ${project_sources})\n')
 
         cmake.write('target_include_directories(${PROJECT_NAME}\n')
+        cmake.write('    PRIVATE\n')
         for include in self.list_of_includes:
-            cmake.write('    ')
-            cmake.write(include)
-            cmake.write('\n')
+            cmake.write('    \"')
+            cmake.write(include.replace('\\', '/'))
+            cmake.write('\"\n')
 
         cmake.write(')\n')
 
 
 project = 'radosc'
-makefile_path = os.path.join('makefile')
+makefile_path = os.path.join('c:\\', 'Projekty', 'trunk', 'win32-msvc2015_d',
+                             'radosc', 'qt4', 'makefile')
+project_path = os.path.join('c:\\', 'Projekty', 'trunk', 'src', 'radosc')
 
-makefile_parser = MakefileParser(makefile_path)
+makefile_parser = MakefileParser(makefile_path, project_path)
 makefile_parser.parse_file()
-makefile_parser.make_cmake('CMakeLists.txt')
+makefile_parser.make_cmake()
