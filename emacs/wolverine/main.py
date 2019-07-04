@@ -210,17 +210,20 @@ class MakefileParser:
         cmake.write(')\n')
 
 
-# if __name__ == "__main__":
-project = 'radosc'
-makefile_path = os.path.join('c:\\', 'Projekty', 'trunk',
-                             'win32-msvc2015_d', 'radosc', 'qt4',
-                             'makefile')
-subproject_path = os.path.join('c:\\', 'Projekty', 'trunk', 'src', 'radosc')
 project_path = os.path.join('c:\\', 'Projekty', 'trunk', 'src')
-
 makefile_parser = MakefileParser(project_path, False)
-build_data = makefile_parser.parse_file(makefile_path, subproject_path)
-makefile_parser.make_cmake(build_data)
+subprojects_list = makefile_parser.get_subprojects()
+
+for subproject in subprojects_list:
+    print('analyzing: ', subproject)
+    makefile_path = os.path.join('c:\\', 'Projekty', 'trunk',
+                                 'win32-msvc2015_d', subproject, 'qt4',
+                                 'makefile')
+    subproject_path = os.path.join('c:\\', 'Projekty', 'trunk', 'src',
+                                   subproject)
+
+    build_data = makefile_parser.parse_file(makefile_path, subproject_path)
+    makefile_parser.make_cmake(build_data)
 # print(makefile_parser.list_of_subprojects())
 
 # app = QApplication(sys.argv)

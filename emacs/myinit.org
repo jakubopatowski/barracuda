@@ -112,7 +112,7 @@ lisp evaluator know about things like function and symbol declarations.
 
 #+BEGIN_SRC emacs-lisp
   (use-package try
-    :ensure )
+    :ensure t)
 
   (use-package ace-window
     :ensure t
@@ -133,6 +133,13 @@ lisp evaluator know about things like function and symbol declarations.
     :ensure t
     :config
     (which-key-mode))
+#+END_SRC
+
+* Words
+
+#+BEGIN_SRC emacs-lisp
+  (use-package dictionary
+    :ensure t)
 #+END_SRC
 
 * Theme
