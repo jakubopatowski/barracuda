@@ -85,6 +85,13 @@ set(project_ui
 qt5_wrap_ui(ui_wrap ${project_ui})
 qt5_wrap_cpp(moc_sources ${project_headers})
 
+message("==============================================================")
+message("                  ..:: nlohmann_json ::..                     ")
+message("==============================================================")
+
+set(CMAKE_PREFIX_PATH "~/Projekty/json/build")
+find_package(nlohmann_json 3.2.0 REQUIRED)
+
 #=====================
 # ..:: Visual Studio Setup ::..
 #=====================
@@ -100,7 +107,8 @@ target_link_libraries(${PROJECT_NAME}
   ${Boost_LIBRARIES}
   Qt5::Core
   Qt5::Gui
-  Qt5::Widgets)
+  Qt5::Widgets
+  nlohmann_json::nlohmann_json)
 
 target_include_directories(${PROJECT_NAME}
   PRIVATE
