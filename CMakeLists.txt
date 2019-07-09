@@ -90,6 +90,7 @@ message("                  ..:: nlohmann_json ::..                     ")
 message("==============================================================")
 
 set(CMAKE_PREFIX_PATH "~/Projekty/json/build")
+set(nlohmann_json_DIR "~/Projekty/json/build")
 find_package(nlohmann_json 3.2.0 REQUIRED)
 
 #=====================
