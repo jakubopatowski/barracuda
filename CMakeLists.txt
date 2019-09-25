@@ -86,6 +86,15 @@ qt5_wrap_ui(ui_wrap ${project_ui})
 qt5_wrap_cpp(moc_sources ${project_headers})
 
 message("==============================================================")
+message("                  ..:: banshee jopa ::..                      ")
+message("==============================================================")
+
+set(CMAKE_PREFIX_PATH "~/Projekty/banshee/build")
+set(banshee_DIR "~/Projekty/banshee/build")
+find_package(banshee REQUIRED)
+
+
+message("==============================================================")
 message("                  ..:: nlohmann_json ::..                     ")
 message("==============================================================")
 
@@ -109,13 +118,14 @@ target_link_libraries(${PROJECT_NAME}
   Qt5::Core
   Qt5::Gui
   Qt5::Widgets
-  nlohmann_json::nlohmann_json)
+  nlohmann_json::nlohmann_json
+  banshee::banshee)
 
 target_include_directories(${PROJECT_NAME}
   PRIVATE
   ${PROJECT_SOURCE_DIR}
   ${Boost_INCLUDE_DIRS}
-  ${Qt5Widgets_INCLUDE_DIRS})
+  ${banshee_INCLUDE_DIRS})
 
 # auto copy dlls if on windows
 if(MSVS)
